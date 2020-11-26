@@ -1,0 +1,40 @@
+---
+inputs:
+  - type: git
+    branch: ${PIPELINE_REPO_BRANCH}
+    service: ${PIPELINE_REPO}
+    path: .pipeline
+triggers:
+  - type: git
+    name: commit-push
+    eventListener: ${GIT_COMMIT_EVENT_LISTENER_NAME}
+    service: ${APP_REPO}
+    branch: master
+    events: { "push": true }
+  - type: manual
+    name: manual-run
+    eventListener: manual-run
+    properties: []
+properties:
+  - type: secure
+    name: toolchain-apikey
+    value: ${API_KEY}
+  - name: apikey
+    value: ${API_KEY}
+    type: SECURE
+  - name: registry-region
+    value: ${REGISTRY_REGION_ID}
+    type: text
+  - name: registry-namespace
+    value: ${REGISTRY_NAMESPACE}
+    type: text
+  - name: dev-region
+    value: ${PROD_REGION_ID}
+    type: text
+  - name: dev-resource-group
+    value: ${PROD_RESOURCE_GROUP}
+    type: text
+  - name: slack-api-token
+    type: SECURE
+  - name: slack-webhook
+    type: SECURE

@@ -1,0 +1,49 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: healthchecker
+spec:
+  params:
+    - name: ibmcloud-api
+      description: the ibmcloud api
+      default: https://cloud.ibm.com
+    - name: region
+    - name: resource-group
+    - name: apikey
+    - name: slack-api-token
+      default: ""
+    - name: slack-webhook
+      default: ""
+    - name: pipeline-debug
+      description: Pipeline debug mode
+      default: "0"
+  workspaces:
+    - name: workspace
+      description: A workspace where the app is to be expected
+      mountPath: /artifacts
+  steps:
+    - name: run-check
+      image: ibmcom/pipeline-base-image
+      workingDir: /artifacts
+      env:
+        - name: API_KEY
+          value: $(params.apikey)
+        - name: REGION
+          values: $(params.region)
+        - name: RESOURCE_GROUP
+          values: $(params.resource-group)
+        - name: HOME
+          value: "/root"
+        - name: PIPELINE_DEBUG
+          value: $(params.pipeline-debug)
+      script: |
+        #!/bin/bash
+        echo "Test Run"
+        echo "$(params.region)"
+        echo "$(params.resource-group)"
+        if [ "$(params.region)" ]; then
+          # if  region is in the 'ibm:yp:<region>' format just keep the region part
+          export IBM_CLOUD_REGION=$(echo "$(params.region)" | awk -F ':' '{print $NF;}')
+        fi
+        ibmcloud login -a $(params.ibmcloud-api) -r $IBM_CLOUD_REGION --apikey $API_KEY
