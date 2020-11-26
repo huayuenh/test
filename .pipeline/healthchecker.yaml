@@ -5,6 +5,9 @@ metadata:
   name: healthchecker
 spec:
   params:
+    - name: continuous-delivery-context-secret
+      description: name of the configmap containing the continuous delivery pipeline context secrets
+      default: secure-properties
     - name: ibmcloud-api
       description: the ibmcloud api
       default: https://cloud.ibm.com
