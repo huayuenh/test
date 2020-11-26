@@ -27,7 +27,7 @@ spec:
       image: ibmcom/pipeline-base-image
       workingDir: /artifacts
       env:
-        - name: API_KEY
+        - name: API_KEY2
           value: $(params.apikey)
         - name: REGION
           values: $(params.region)
@@ -37,6 +37,11 @@ spec:
           value: "/root"
         - name: PIPELINE_DEBUG
           value: $(params.pipeline-debug)
+        - name: API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: $(params.continuous-delivery-context-secret)
+              key: "apikey"
       script: |
         #!/bin/bash
         echo "Test Run"
